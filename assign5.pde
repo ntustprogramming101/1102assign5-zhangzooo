@@ -563,7 +563,7 @@ void drawTimerUI(){
 }
 
 void addTime(float seconds){
-  gameTimer += round(seconds * 60);
+  gameTimer += round(seconds);
 }
 
 boolean isHit(float ax, float ay, float aw, float ah, float bx, float by, float bw, float bh){
