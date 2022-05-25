@@ -312,8 +312,11 @@ void draw() {
 
 		// Requirement #1: Clocks
     for(int i = 0; i < clockX.length; i++){
-
+      
       image(clock, clockX[i], clockY[i]);
+      if(clockX[i]==cabbageX[i]&& clockY[i]==cabbageY[i]){
+        image(clock, clockX[i], clockY[i]);
+      }
 
       // Requirement #3: Use boolean isHit(...) to detect collision
       if( isHit(clockX[i],clockY[i],SOIL_SIZE,SOIL_SIZE,playerX,playerY,SOIL_SIZE,SOIL_SIZE)) { 
@@ -473,7 +476,6 @@ void draw() {
 
 		// Depth UI
 		drawDepthUI();
-    drawCaution();
 
 		// Timer
 		gameTimer --;
@@ -547,7 +549,7 @@ void drawDepthUI(){
 }
 
 void drawTimerUI(){
-	String timeString = convertFramesToTimeString(gameTimer); // Requirement #4: Get the mm:ss string using String convertFramesToTimeString(int frames) 
+	String timeString = convertFrameToTimeString(gameTimer); // Requirement #4: Get the mm:ss string using String convertFramesToTimeString(int frames) 
 	textAlign(LEFT, BOTTOM);
 
 	// Time Text Shadow Effect - You don't have to change this!
@@ -560,8 +562,8 @@ void drawTimerUI(){
 	text(timeString, 0, height);
 }
 
-void addTime(float seconds){					// Requirement #2
-  gameTimer+=seconds;
+void addTime(float seconds){
+  gameTimer += round(seconds * 60);
 }
 
 boolean isHit(float ax, float ay, float aw, float ah, float bx, float by, float bw, float bh){
@@ -571,22 +573,27 @@ boolean isHit(float ax, float ay, float aw, float ah, float bx, float by, float 
       }else{  return false;  }
 }
 
-String convertFramesToTimeString(int frames){	// Requirement #4
-	int m =frames/3600;
-  int s = floor((frames%3600)/60);
-  return nf(m,2) +":"+ nf(s,2) ;
+String convertFrameToTimeString(int frames){
+  String result = "";
+  float totalSeconds = float(frames) / 60;
+  result += nf(floor(totalSeconds/60), 2);
+  result += ":";
+  result += nf(floor(totalSeconds%60), 2);
+  return result;
 }
 
 color getTimeTextColor(int frames){				// Requirement #5
-  int m =frames/3600;
-  int s = floor((frames%3600)/60);
-  if (m>=2){return(#00ffff);}
-  if(m<2 && m>1){return(#ffffff);}
-	if(m<2 && m>1){return(#ffffff);}
-  if(m<1 && s>=30 ){return(#ffcc00);}
-  if(m<1 && s<30 && s>10 ){return(#ff6600);}
-  if(m<1 && s<10 ){return(#ff0000);}
-  else{return(#ffffff);}
+  if(frames >= 7200){
+    return #00ffff;
+  }else if(frames >= 3600){
+    return #ffffff;
+  }else if(frames >= 1800){
+    return #ffcc00;
+  }else if(frames >= 600){
+    return #ff6600;
+  }
+
+  return #ff0000;
 }
 
 int getEnemyIndexByRow(int row){				// Requirement #6  
